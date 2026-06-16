@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOAD COD1 — Conducteur d'engin-pompe | GIP Aviation — BA 125 Istres</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <button class="burger" id="burger" style="display:none">☰</button>
+  <div class="logo">GIP</div>
+  <h1>FOAD — Conducteur d'engin-pompe (COD1)
+    <small>GIP Aviation · Base aérienne 125 Istres · FPT SIDES Renault Midlum</small></h1>
+  <div class="right" id="headerRight"></div>
+</header>
+
+<div id="app"></div>
+
+<footer class="foot">FOAD COD1 — Conducteur d'engin-pompe · GIP Aviation · Base aérienne 125 Istres · FPT SIDES Renault Midlum<br>
+Module de vérification des acquis à réaliser avant la journée de formation pratique en présentiel.</footer>
+
+<script src="content.js"></script>
+<script>
+/* ======================= ÉTAT GLOBAL ======================= */
+let me = null;          // stagiaire connecté
+let current = "accueil"; // module courant
+const MODULES = COURSE.modules;
+
+/* localStorage : mémorise juste l'id du stagiaire pour reprise auto */
+const LS = "foad_gip_current_id";
+async function api(path, method, body){
+  const opt = { method: method||'GET', headers:{'Content-Type':'application/json'} };
+  if(body) opt.body = JSON.stringify(body);
+  const r = await fetch(path, opt);
+  const data = await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(data.error || 'Erreur serveur');
+  return data;
+}
+
+/* ======================= ÉCRAN DE CONNEXION ======================= */
+function renderAuth(){
+  document.getElementById('headerRight').innerHTML =
+    `<a class="linkbtn" href="/admin">Espace formateur</a>`;
+  document.getElementById('app').innerHTML = `
+   <div class="auth-wrap"><div class="auth-card">
+    <div class="head"><h2>Accès au parcours</h2><p>Inscrivez-vous pour commencer, ou reprenez votre parcours avec votre matricule.</p></div>
+    <div class="body">
+      <div class="tabs">
+        <button id="tabReg" class="on" onclick="switchTab('reg')">S'inscrire</button>
+        <button id="tabLog" onclick="switchTab('log')">Reprendre</button>
+      </div>
+      <div id="msg" class="msg"></div>
+      <div id="formReg">
+        <div class="field"><label>Nom <span class="req">*</span></label><input id="r_nom" autocomplete="family-name"></div>
+        <div class="field"><label>Prénom <span class="req">*</span></label><input id="r_prenom" autocomplete="given-name"></div>
+        <div class="field"><label>Matricule <span class="req">*</span></label><input id="r_mat" placeholder="Identifiant unique de reprise"></div>
+        <div class="field"><label>Unité / société</label><input id="r_unite" placeholder="GIP, section, etc."></div>
+        <div class="field"><label>E-mail</label><input id="r_email" type="email" autocomplete="email"></div>
+        <button class="btn fullbtn" onclick="doRegister()">Commencer le parcours →</button>
+        <div class="hint">Le matricule vous permettra de reprendre votre progression plus tard.</div>
+      </div>
+      <div id="formLog" style="display:none">
+        <div class="field"><label>Matricule <span class="req">*</span></label><input id="l_mat" placeholder="Votre matricule d'inscription"></div>
+        <button class="btn blue fullbtn" onclick="doLogin()">Reprendre mon parcours →</button>
+        <div class="hint">Saisissez le matricule utilisé lors de votre inscription.</div>
+      </div>
+    </div>
+   </div></div>`;
+}
+function switchTab(t){
+  document.getElementById('tabReg').classList.toggle('on', t==='reg');
+  document.getElementById('tabLog').classList.toggle('on', t==='log');
+  document.getElementById('formReg').style.display = t==='reg'?'block':'none';
+  document.getElementById('formLog').style.display = t==='log'?'block':'none';
+  hideMsg();
+}
+function showMsg(txt, ok){ const m=document.getElementById('msg'); m.textContent=txt; m.className='msg show '+(ok?'ok':'err'); }
+function hideMsg(){ const m=document.getElementById('msg'); if(m) m.className='msg'; }
+
+async function doRegister(){
+  const body = {
+    nom: val('r_nom'), prenom: val('r_prenom'), matricule: val('r_mat'),
+    unite: val('r_unite'), email: val('r_email')
+  };
+  if(!body.nom || !body.prenom || !body.matricule){ showMsg('Nom, prénom et matricule sont obligatoires.'); return; }
+  try{
+    const d = await api('/api/register','POST',body);
+    me = d.stagiaire; localStorage.setItem(LS, me.id);
+    startCourse();
+  }catch(e){ showMsg(e.message); }
+}
+async function doLogin(){
+  const mat = val('l_mat');
+  if(!mat){ showMsg('Matricule requis.'); return; }
+  try{
+    const d = await api('/api/login','POST',{matricule:mat});
+    me = d.stagiaire; localStorage.setItem(LS, me.id);
+    startCourse();
+  }catch(e){ showMsg(e.message); }
+}
+function val(id){ return document.getElementById(id).value.trim(); }
+
+/* ======================= COURS ======================= */
+function startCourse(){
+  current = firstUnfinished();
+  document.getElementById('headerRight').innerHTML = `
+    <div class="who"><b>${esc(me.prenom)} ${esc(me.nom)}</b>${me.unite?esc(me.unite):''}</div>
+    <div class="prog"><span id="progtxt">0 %</span><div class="bar"><i id="progbar"></i></div></div>
+    <button class="linkbtn" onclick="logout()">Quitter</button>`;
+  document.getElementById('app').innerHTML = `<div class="wrap"><nav class="side" id="nav"></nav><main id="main"></main></div>`;
+  document.getElementById('burger').style.display='block';
+  document.getElementById('burger').onclick=()=>document.getElementById('nav').classList.toggle('open');
+  render(); buildNav(); updateProg();
+}
+function logout(){ localStorage.removeItem(LS); me=null; location.reload(); }
+
+function firstUnfinished(){
+  for(const m of MODULES){ if(m.quiz && !(me.progress.quiz[m.id] && me.progress.quiz[m.id].passed)) return m.id; }
+  if(!(me.progress.quiz.final && me.progress.quiz.final.passed)) return 'final';
+  return 'accueil';
+}
+
+function buildNav(){
+  const nav=document.getElementById('nav');
+  let h=`<div class="grp">Parcours FOAD</div>`;
+  MODULES.forEach(m=>{
+    const done = m.quiz ? (me.progress.quiz[m.id] && me.progress.quiz[m.id].passed) : me.progress.seen[m.id];
+    h+=navBtn(m,done);
+  });
+  h+=`<div class="grp">Évaluation finale</div>`;
+  const fdone = me.progress.quiz.final && me.progress.quiz.final.passed;
+  h+=navBtn(FINAL,fdone);
+  nav.innerHTML=h;
+}
+function navBtn(m,done){
+  return `<button data-id="${m.id}" class="${m.id===current?'active':''} ${done?'done':''}" onclick="go('${m.id}')">
+    <span class="num">${m.num}</span><span>${m.menu}</span><span class="ck">✓</span></button>`;
+}
+function go(id){
+  current=id; render(); buildNav();
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.getElementById('nav').classList.remove('open');
+}
+
+function render(){
+  const main=document.getElementById('main');
+  if(current==='final'){ main.innerHTML = quizPage(FINAL); wireQuiz(FINAL,'final'); updateProg(); return; }
+  const m = MODULES.find(x=>x.id===current);
+  // marquer comme vu (sauf accueil purement informatif - on le marque aussi)
+  markSeen(m.id);
+  let h = m.html;
+  if(m.quiz){ h += quizBlock(m.quiz, m.id); }
+  h += navButtons(m);
+  main.innerHTML = h;
+  if(m.quiz) wireQuiz(m.quiz, m.id);
+  updateProg();
+}
+async function markSeen(id){
+  if(me.progress.seen[id]) return;
+  me.progress.seen[id]=true;
+  try{ const d=await api('/api/progress','POST',{id:me.id, moduleId:id}); me=d.stagiaire; buildNav(); }catch(e){}
+}
+
+function navButtons(m){
+  const idx = MODULES.findIndex(x=>x.id===m.id);
+  const prev = idx>0 ? MODULES[idx-1] : null;
+  const next = idx<MODULES.length-1 ? MODULES[idx+1] : FINAL;
+  let l = prev?`<button class="btn ghost" onclick="go('${prev.id}')">← ${prev.menu}</button>`:`<span></span>`;
+  let r = `<button class="btn" onclick="go('${next.id}')">${next===FINAL?'QCM final ★':next.menu+' →'}</button>`;
+  return `<div class="navbtns">${l}${r}</div>`;
+}
+
+/* ---- QCM ---- */
+function quizBlock(quiz, mid){ return `<div class="quiz" id="quizbox">${quizInner(quiz, mid)}</div>`; }
+function quizPage(quiz){
+  return `<div class="crumb">Évaluation finale</div>
+    <h2 class="title"><span class="ic">★</span> QCM final</h2>
+    <p class="lead">Vérification globale des acquis avant la journée en présentiel. Score requis : ${quiz.pass} %.</p>
+    <div class="quiz" id="quizbox">${quizInner(quiz,'final')}</div>
+    <div class="navbtns"><button class="btn ghost" onclick="go('m5')">← Module 5</button><span></span></div>`;
+}
+function quizInner(quiz, mid){
+  let h=`<h3>${quiz.title}</h3>`;
+  const prev = me.progress.quiz[mid];
+  if(prev){ h+=`<div class="qresult show ${prev.passed?'pass':'fail'}">Dernier résultat enregistré : ${prev.good}/${prev.total} (${prev.pct} %) — ${prev.passed?'validé ✅':'à repasser'}. Tentative(s) : ${prev.attempts}.</div>`; }
+  quiz.questions.forEach((q,i)=>{
+    const multi = q.c.length>1;
+    h+=`<div class="q" data-qi="${i}"><div class="qz"><span class="n">${i+1}.</span>${q.q}${multi?' <span class="pill or">plusieurs réponses</span>':''}</div>`;
+    q.o.forEach((opt,j)=>{ h+=`<label class="opt"><input type="${multi?'checkbox':'radio'}" name="${mid}_q${i}" value="${j}"> ${opt}</label>`; });
+    h+=`<div class="expl">💡 ${q.e}</div></div>`;
+  });
+  h+=`<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+        <button class="btn" id="valid">Valider mes réponses</button>
+        <button class="btn ghost" id="reset" style="display:none">Recommencer</button>
+      </div><div class="qresult" id="qres"></div>`;
+  return h;
+}
+function wireQuiz(quiz, mid){
+  const box=document.getElementById('quizbox');
+  box.querySelector('#valid').onclick=()=>correct(quiz,mid,box);
+  box.querySelector('#reset').onclick=()=>{ render(); };
+}
+async function correct(quiz,mid,box){
+  let good=0; const answers=[];
+  quiz.questions.forEach((q,i)=>{
+    const qEl=box.querySelector(`.q[data-qi="${i}"]`);
+    const inputs=[...qEl.querySelectorAll('input')];
+    const chosen=inputs.filter(x=>x.checked).map(x=>+x.value);
+    const ok = chosen.slice().sort().join(',')===q.c.slice().sort().join(',') && chosen.length>0;
+    if(ok) good++; answers.push({q:i, chosen, ok});
+    inputs.forEach(inp=>{
+      const lab=inp.closest('.opt'); lab.classList.remove('correct','wrong','miss'); inp.disabled=true;
+      const v=+inp.value;
+      if(q.c.includes(v)) lab.classList.add(inp.checked?'correct':'miss');
+      else if(inp.checked) lab.classList.add('wrong');
+    });
+    qEl.querySelector('.expl').classList.add('show');
+  });
+  const pct=Math.round(good/quiz.questions.length*100);
+  const passed=pct>=quiz.pass;
+  const res=box.querySelector('#qres');
+  res.className='qresult show '+(passed?'pass':'fail');
+  res.innerHTML=`${passed?'✅ Chapitre validé !':'⚠️ Score insuffisant'} — ${good}/${quiz.questions.length} bonnes réponses (${pct} %). Seuil requis : ${quiz.pass} %.`
+    + (passed?'':'<br>Relisez le module puis recommencez le QCM.');
+  box.querySelector('#valid').style.display='none';
+  box.querySelector('#reset').style.display='inline-block';
+  // enregistrer côté serveur
+  try{
+    const d=await api('/api/quiz','POST',{id:me.id, moduleId:mid, passed, pct, good, total:quiz.questions.length, answers});
+    me=d.stagiaire;
+  }catch(e){ res.innerHTML+='<br><small>(⚠️ enregistrement serveur indisponible)</small>'; }
+  buildNav(); updateProg();
+  if(mid==='final' && passed){ res.innerHTML+=finalCongrats(pct); }
+}
+function finalCongrats(pct){
+  const C=2*Math.PI*50;
+  return `<div class="final-badge"><svg width="120" height="120" viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="50" fill="none" stroke="#e3e8ed" stroke-width="12"/>
+    <circle cx="60" cy="60" r="50" fill="none" stroke="#1e9e5a" stroke-width="12" stroke-linecap="round"
+      stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct/100)}" transform="rotate(-90 60 60)"/>
+    <text x="60" y="66" text-anchor="middle" font-size="26" font-weight="800" fill="#0e2433">${pct}%</text></svg>
+    <p>FOAD validée — vous êtes prêt pour le présentiel sur l'engin.</p></div>`;
+}
+
+function updateProg(){
+  const total = MODULES.filter(m=>m.quiz).length + 1;
+  let done=0;
+  MODULES.forEach(m=>{ if(m.quiz && me.progress.quiz[m.id] && me.progress.quiz[m.id].passed) done++; });
+  if(me.progress.quiz.final && me.progress.quiz.final.passed) done++;
+  const pct=Math.round(done/total*100);
+  const bar=document.getElementById('progbar'), txt=document.getElementById('progtxt');
+  if(bar) bar.style.width=pct+'%'; if(txt) txt.textContent=pct+' %';
+}
+
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* ======================= DÉMARRAGE ======================= */
+async function boot(){
+  const id = localStorage.getItem(LS);
+  if(id){
+    // tenter de reprendre via le matricule stocké ? on relit via login matricule impossible (on n'a que id)
+    // -> on récupère par une route publique : on relogue via /api/login si on avait le matricule; sinon on garde l'id
+    try{
+      // on n'a pas d'endpoint get-by-id public : on retente register conflit pour récupérer ? Non.
+      // Stratégie simple : si id présent mais pas de session, on redemande la connexion.
+      // Pour fluidité, on stocke aussi le matricule.
+      const mat = localStorage.getItem(LS+'_mat');
+      if(mat){ const d=await api('/api/login','POST',{matricule:mat}); me=d.stagiaire; startCourse(); return; }
+    }catch(e){}
+  }
+  renderAuth();
+}
+/* on mémorise le matricule à l'inscription/connexion pour la reprise auto */
+const _origRegister=doRegister, _origLogin=doLogin;
+doRegister=async function(){ await _origRegister(); if(me) localStorage.setItem(LS+'_mat', me.matricule); };
+doLogin=async function(){ await _origLogin(); if(me) localStorage.setItem(LS+'_mat', me.matricule); };
+boot();
+</script>
+</body>
+</html>

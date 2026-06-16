@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace formateur — FOAD COD1 | GIP Aviation</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+  .dash{max-width:1180px;margin:0 auto;padding:24px clamp(14px,4vw,40px)}
+  .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:18px}
+  .toolbar .search{flex:1;min-width:200px;padding:10px 14px;border:1.5px solid var(--gris-2);border-radius:10px;font-size:14px;font-family:inherit}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:#fff;border-radius:12px;box-shadow:var(--ombre);padding:16px;border-left:4px solid var(--rouge)}
+  .stat b{display:block;font-size:26px;color:var(--navy)} .stat span{font-size:12.5px;color:var(--muted)}
+  table.adm{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--ombre);font-size:13px}
+  table.adm th{background:var(--navy);color:#fff;padding:10px 9px;text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.4px;cursor:pointer;white-space:nowrap}
+  table.adm td{padding:9px;border-top:1px solid var(--gris-2);vertical-align:middle}
+  table.adm tr:hover td{background:#f3f8fc}
+  .cell-mod{width:46px;text-align:center;font-weight:700;border-radius:6px}
+  .m-ok{background:#e9f7ef;color:var(--vert-d)} .m-ko{background:#fdecef;color:var(--rouge-d)} .m-na{background:#f1f3f5;color:#aab4bc}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700}
+  .b-done{background:var(--vert);color:#fff} .b-prog{background:var(--or);color:#3a2c00} .b-new{background:var(--gris-2);color:var(--navy)}
+  .iconbtn{background:none;border:0;cursor:pointer;font-size:15px;padding:3px 6px;border-radius:6px}
+  .iconbtn:hover{background:var(--gris-2)}
+  .modal{position:fixed;inset:0;background:rgba(14,36,51,.55);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+  .modal.show{display:flex}
+  .modal .box{background:#fff;border-radius:16px;max-width:640px;width:100%;max-height:88vh;overflow:auto;box-shadow:var(--ombre)}
+  .modal .box .h{background:linear-gradient(120deg,var(--navy),var(--navy-2));color:#fff;padding:20px 24px;border-radius:16px 16px 0 0;position:sticky;top:0}
+  .modal .box .h h3{margin:0;border:0;color:#fff} .modal .box .h p{color:#cfe0ec;font-size:13px;margin:4px 0 0}
+  .modal .box .c{padding:20px 24px}
+  .modal .close{position:absolute;right:18px;top:16px;background:rgba(255,255,255,.15);border:0;color:#fff;border-radius:8px;font-size:18px;cursor:pointer;padding:2px 10px}
+  .mini{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">GIP</div>
+  <h1>Espace formateur — Suivi des stagiaires
+    <small>FOAD COD1 · GIP Aviation · BA 125 Istres</small></h1>
+  <div class="right" id="headerRight"><a class="linkbtn" href="/">← Espace stagiaire</a></div>
+</header>
+
+<div id="app"></div>
+
+<div class="modal" id="modal"><div class="box">
+  <div class="h"><button class="close" onclick="closeModal()">✕</button><h3 id="mTitle"></h3><p id="mSub"></p></div>
+  <div class="c" id="mBody"></div>
+</div></div>
+
+<script>
+let token = sessionStorage.getItem('foad_admin_token') || null;
+let rows = [];
+let sortKey = 'lastSeen', sortDir = -1;
+const MOD_IDS = ['m1','m2','m3','m4','m5','final'];
+const MOD_LABELS = {m1:'M1',m2:'M2',m3:'M3',m4:'M4',m5:'M5',final:'Final'};
+
+async function api(path, method, body){
+  const opt={method:method||'GET',headers:{'Content-Type':'application/json'}};
+  if(token) opt.headers['x-admin-token']=token;
+  if(body) opt.body=JSON.stringify(body);
+  const r=await fetch(path,opt);
+  const data=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(data.error||'Erreur');
+  return data;
+}
+
+/* ---- LOGIN ADMIN ---- */
+function renderLogin(){
+  document.getElementById('app').innerHTML=`
+   <div class="auth-wrap"><div class="auth-card">
+    <div class="head"><h2>Espace formateur</h2><p>Accès protégé — réservé à l'administration de la formation.</p></div>
+    <div class="body">
+      <div id="msg" class="msg"></div>
+      <div class="field"><label>Mot de passe administrateur</label>
+        <input id="pwd" type="password" onkeydown="if(event.key==='Enter')doAdminLogin()"></div>
+      <button class="btn fullbtn" onclick="doAdminLogin()">Se connecter →</button>
+    </div>
+   </div></div>`;
+}
+async function doAdminLogin(){
+  const password=document.getElementById('pwd').value;
+  try{
+    const d=await api('/api/admin/login','POST',{password});
+    token=d.token; sessionStorage.setItem('foad_admin_token',token);
+    loadDash();
+  }catch(e){ const m=document.getElementById('msg'); m.textContent=e.message; m.className='msg show err'; }
+}
+
+/* ---- DASHBOARD ---- */
+async function loadDash(){
+  try{
+    const d=await api('/api/admin/stagiaires');
+    rows=d.stagiaires; renderDash();
+  }catch(e){
+    token=null; sessionStorage.removeItem('foad_admin_token'); renderLogin();
+  }
+}
+function modPct(s,m){ const q=s.progress.quiz[m]; return q?q.pct:null; }
+function validatedCount(s){ return MOD_IDS.filter(m=>s.progress.quiz[m]&&s.progress.quiz[m].passed).length; }
+function statusOf(s){ const v=validatedCount(s); if(v===MOD_IDS.length) return 'done'; if(v>0||Object.keys(s.progress.seen).length>1) return 'prog'; return 'new'; }
+
+function renderDash(){
+  document.getElementById('headerRight').innerHTML=`
+    <a class="linkbtn" href="/">← Espace stagiaire</a>
+    <button class="linkbtn" onclick="logoutAdmin()">Déconnexion</button>`;
+  const total=rows.length;
+  const done=rows.filter(s=>statusOf(s)==='done').length;
+  const prog=rows.filter(s=>statusOf(s)==='prog').length;
+  const avg= total? Math.round(rows.reduce((a,s)=>a+(s.progress.quiz.final?s.progress.quiz.final.pct:0),0)/total):0;
+  document.getElementById('app').innerHTML=`
+   <div class="dash">
+    <div class="stats">
+      <div class="stat"><b>${total}</b><span>Stagiaires inscrits</span></div>
+      <div class="stat" style="border-color:var(--vert)"><b>${done}</b><span>Parcours terminés</span></div>
+      <div class="stat" style="border-color:var(--or)"><b>${prog}</b><span>En cours</span></div>
+      <div class="stat" style="border-color:var(--bleu)"><b>${avg}%</b><span>Moyenne QCM final</span></div>
+    </div>
+    <div class="toolbar">
+      <input class="search" id="search" placeholder="🔍 Rechercher (nom, matricule, unité)…" oninput="renderTable()">
+      <button class="btn v" onclick="exportCsv()">⬇ Export CSV</button>
+      <button class="btn ghost" onclick="loadDash()">↻ Actualiser</button>
+    </div>
+    <div id="tableWrap"></div>
+   </div>`;
+  renderTable();
+}
+
+function renderTable(){
+  const term=(document.getElementById('search')?.value||'').toLowerCase();
+  let list=rows.filter(s=>(`${s.nom} ${s.prenom} ${s.matricule} ${s.unite}`).toLowerCase().includes(term));
+  list.sort((a,b)=>{
+    let va,vb;
+    if(sortKey==='nom'){va=a.nom.toLowerCase();vb=b.nom.toLowerCase();}
+    else if(sortKey==='valid'){va=validatedCount(a);vb=validatedCount(b);}
+    else if(sortKey==='final'){va=a.progress.quiz.final?a.progress.quiz.final.pct:-1;vb=b.progress.quiz.final?b.progress.quiz.final.pct:-1;}
+    else {va=a[sortKey]||'';vb=b[sortKey]||'';}
+    return (va>vb?1:va<vb?-1:0)*sortDir;
+  });
+  let h=`<table class="adm"><tr>
+    <th onclick="setSort('nom')">Stagiaire</th>
+    <th onclick="setSort('matricule')">Matricule</th>
+    <th>Unité</th>
+    ${MOD_IDS.map(m=>`<th>${MOD_LABELS[m]}</th>`).join('')}
+    <th onclick="setSort('valid')">Validés</th>
+    <th onclick="setSort('lastSeen')">Dernière activité</th>
+    <th>Statut</th><th></th></tr>`;
+  if(!list.length){ h+=`<tr><td colspan="12" style="text-align:center;color:var(--muted);padding:24px">Aucun stagiaire.</td></tr>`; }
+  list.forEach(s=>{
+    h+=`<tr>
+      <td><b>${esc(s.prenom)} ${esc(s.nom)}</b></td>
+      <td>${esc(s.matricule)}</td>
+      <td class="mini">${esc(s.unite||'—')}</td>
+      ${MOD_IDS.map(m=>{const p=modPct(s,m);const q=s.progress.quiz[m];
+        const cls=q?(q.passed?'m-ok':'m-ko'):'m-na'; return `<td><div class="cell-mod ${cls}">${p==null?'—':p+'%'}</div></td>`;}).join('')}
+      <td><b>${validatedCount(s)}</b>/${MOD_IDS.length}</td>
+      <td class="mini">${fmtDate(s.lastSeen)}</td>
+      <td>${statusBadge(s)}</td>
+      <td>
+        <button class="iconbtn" title="Détails" onclick="openDetail('${s.id}')">👁</button>
+        <button class="iconbtn" title="Réinitialiser la progression" onclick="resetStagiaire('${s.id}')">↺</button>
+      </td></tr>`;
+  });
+  h+=`</table>`;
+  document.getElementById('tableWrap').innerHTML=h;
+}
+function statusBadge(s){ const st=statusOf(s);
+  if(st==='done') return `<span class="badge b-done">Terminé</span>`;
+  if(st==='prog') return `<span class="badge b-prog">En cours</span>`;
+  return `<span class="badge b-new">Inscrit</span>`;
+}
+function setSort(k){ if(sortKey===k) sortDir*=-1; else {sortKey=k;sortDir=1;} renderTable(); }
+
+async function openDetail(id){
+  const s=rows.find(x=>x.id===id); if(!s) return;
+  document.getElementById('mTitle').textContent=`${s.prenom} ${s.nom}`;
+  document.getElementById('mSub').textContent=`Matricule ${s.matricule}${s.unite?' · '+s.unite:''}${s.email?' · '+s.email:''}`;
+  let h=`<p class="mini">Inscrit le ${fmtDate(s.createdAt)} · Dernière activité ${fmtDate(s.lastSeen)}</p>`;
+  h+=`<table class="t"><tr><th>Module</th><th>Score</th><th>Statut</th><th>Tentatives</th><th>Date</th></tr>`;
+  const names={m1:'1 · Conduite & sécurité',m2:'2 · Pertes de charge',m3:'3 · La pompe',m4:'4 · Mise en aspiration',m5:'5 · Pannes & entretien',final:'★ QCM final'};
+  MOD_IDS.forEach(m=>{ const q=s.progress.quiz[m];
+    h+=`<tr><td>${names[m]}</td><td>${q?q.good+'/'+q.total+' ('+q.pct+'%)':'—'}</td>
+      <td>${q?(q.passed?'✅ validé':'❌ échec'):'<span class="mini">non passé</span>'}</td>
+      <td>${q?q.attempts:'—'}</td><td class="mini">${q?fmtDate(q.date):'—'}</td></tr>`;
+  });
+  h+=`</table>`;
+  const seen=Object.keys(s.progress.seen).length;
+  h+=`<p class="mini">Modules consultés : ${seen} · Progression globale : ${Math.round(validatedCount(s)/MOD_IDS.length*100)}%</p>`;
+  document.getElementById('mBody').innerHTML=h;
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('show'); }
+
+async function resetStagiaire(id){
+  const s=rows.find(x=>x.id===id);
+  if(!confirm(`Réinitialiser la progression de ${s.prenom} ${s.nom} ? Les scores seront effacés (le compte est conservé).`)) return;
+  try{ await api('/api/admin/reset/'+id,'POST'); loadDash(); }catch(e){ alert(e.message); }
+}
+function exportCsv(){ window.location='/api/admin/export.csv?token='+encodeURIComponent(token); }
+function logoutAdmin(){ token=null; sessionStorage.removeItem('foad_admin_token'); renderLogin(); }
+
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso);
+  return d.toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+/* boot */
+if(token) loadDash(); else renderLogin();
+</script>
+</body>
+</html>
