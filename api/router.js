@@ -163,6 +163,16 @@ module.exports = async (req, res) => {
       return send(res, 200, { ok: true });
     }
 
+    if (parts[0] === 'admin' && parts[1] === 'delete' && parts[2] && method === 'POST') {
+      if (!isAdmin(req)) return send(res, 401, { error: 'Accès administrateur requis.' });
+      const db = await loadDB();
+      const idx = db.stagiaires.findIndex(x => x.id === parts[2]);
+      if (idx === -1) return send(res, 404, { error: 'Introuvable.' });
+      const removed = db.stagiaires.splice(idx, 1)[0];
+      await saveDB(db);
+      return send(res, 200, { ok: true, removed: removed ? removed.matricule : null });
+    }
+
     if (route === 'admin/export.csv' && method === 'GET') {
       if (!isAdmin(req)) return send(res, 401, { error: 'Accès administrateur requis.' });
       const db = await loadDB();
