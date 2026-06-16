@@ -44,7 +44,7 @@ function renderAuth(){
     `<a class="linkbtn" href="/admin">Espace formateur</a>`;
   document.getElementById('app').innerHTML = `
    <div class="auth-wrap"><div class="auth-card">
-    <div class="head"><h2>Accès au parcours</h2><p>Inscrivez-vous pour commencer, ou reprenez votre parcours avec votre matricule.</p></div>
+    <div class="head"><h2>Accès au parcours</h2><p>Inscrivez-vous pour commencer, ou reprenez votre parcours avec votre code personnalisé.</p></div>
     <div class="body">
       <div class="tabs">
         <button id="tabReg" class="on" onclick="switchTab('reg')">S'inscrire</button>
@@ -54,16 +54,16 @@ function renderAuth(){
       <div id="formReg">
         <div class="field"><label>Nom <span class="req">*</span></label><input id="r_nom" autocomplete="family-name"></div>
         <div class="field"><label>Prénom <span class="req">*</span></label><input id="r_prenom" autocomplete="given-name"></div>
-        <div class="field"><label>Matricule <span class="req">*</span></label><input id="r_mat" placeholder="Identifiant unique de reprise"></div>
+        <div class="field"><label>Votre code personnalisé <span class="req">*</span></label><input id="r_mat" placeholder="Choisissez un code à mémoriser (ex. votre nom + un chiffre)"></div>
         <div class="field"><label>Unité / société</label><input id="r_unite" placeholder="GIP, section, etc."></div>
         <div class="field"><label>E-mail</label><input id="r_email" type="email" autocomplete="email"></div>
         <button class="btn fullbtn" onclick="doRegister()">Commencer le parcours →</button>
-        <div class="hint">Le matricule vous permettra de reprendre votre progression plus tard.</div>
+        <div class="hint">⚠️ Mémorisez bien ce code personnalisé : il vous permettra de reprendre votre parcours là où vous l'avez laissé.</div>
       </div>
       <div id="formLog" style="display:none">
-        <div class="field"><label>Matricule <span class="req">*</span></label><input id="l_mat" placeholder="Votre matricule d'inscription"></div>
+        <div class="field"><label>Votre code personnalisé <span class="req">*</span></label><input id="l_mat" placeholder="Le code que vous avez mémorisé à l'inscription"></div>
         <button class="btn blue fullbtn" onclick="doLogin()">Reprendre mon parcours →</button>
-        <div class="hint">Saisissez le matricule utilisé lors de votre inscription.</div>
+        <div class="hint">Saisissez le code personnalisé choisi lors de votre inscription.</div>
       </div>
     </div>
    </div></div>`;
@@ -83,7 +83,7 @@ async function doRegister(){
     nom: val('r_nom'), prenom: val('r_prenom'), matricule: val('r_mat'),
     unite: val('r_unite'), email: val('r_email')
   };
-  if(!body.nom || !body.prenom || !body.matricule){ showMsg('Nom, prénom et matricule sont obligatoires.'); return; }
+  if(!body.nom || !body.prenom || !body.matricule){ showMsg('Nom, prénom et code personnalisé sont obligatoires.'); return; }
   try{
     const d = await api('/api/register','POST',body);
     me = d.stagiaire; localStorage.setItem(LS, me.id);
@@ -92,7 +92,7 @@ async function doRegister(){
 }
 async function doLogin(){
   const mat = val('l_mat');
-  if(!mat){ showMsg('Matricule requis.'); return; }
+  if(!mat){ showMsg('Code personnalisé requis.'); return; }
   try{
     const d = await api('/api/login','POST',{matricule:mat});
     me = d.stagiaire; localStorage.setItem(LS, me.id);
