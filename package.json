@@ -1,0 +1,7 @@
+{
+  "name": "foad-gip-cod1",
+  "version": "1.0.0",
+  "description": "FOAD COD1 - Conducteur d'engin-pompe - GIP Aviation BA125 Istres (Vercel serverless + KV)",
+  "private": true,
+  "engines": { "node": ">=18" }
+}
