@@ -158,6 +158,7 @@ function renderTable(){
       <td>
         <button class="iconbtn" title="Détails" onclick="openDetail('${s.id}')">👁</button>
         <button class="iconbtn" title="Réinitialiser la progression" onclick="resetStagiaire('${s.id}')">↺</button>
+        <button class="iconbtn" title="Supprimer le stagiaire" onclick="deleteStagiaire('${s.id}')">🗑️</button>
       </td></tr>`;
   });
   h+=`</table>`;
@@ -194,6 +195,11 @@ async function resetStagiaire(id){
   const s=rows.find(x=>x.id===id);
   if(!confirm(`Réinitialiser la progression de ${s.prenom} ${s.nom} ? Les scores seront effacés (le compte est conservé).`)) return;
   try{ await api('/api/admin/reset/'+id,'POST'); loadDash(); }catch(e){ alert(e.message); }
+}
+async function deleteStagiaire(id){
+  const s=rows.find(x=>x.id===id);
+  if(!confirm(`Supprimer définitivement ${s.prenom} ${s.nom} (matricule ${s.matricule}) ? Cette action est irréversible.`)) return;
+  try{ await api('/api/admin/delete/'+id,'POST'); loadDash(); }catch(e){ alert(e.message); }
 }
 function exportCsv(){ window.location='/api/admin/export.csv?token='+encodeURIComponent(token); }
 function logoutAdmin(){ token=null; sessionStorage.removeItem('foad_admin_token'); renderLogin(); }
