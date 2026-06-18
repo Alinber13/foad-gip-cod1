@@ -40,9 +40,8 @@ COURSE.modules.push({ id: "accueil", menu: "Accueil & objectifs", num: "⌂", qu
   <div class="callout info">Chaque module se termine par un <b>QCM d'autoévaluation</b> (seuil de réussite : <b>80 %</b>). Votre progression et vos scores sont enregistrés sur le serveur et consultables par le formateur. Vous pouvez quitter et reprendre à tout moment avec votre matricule.</div>
   <div class="card">
     <h3 style="margin-top:0">L'engin en bref — FPT SIDES sur Renault Midlum</h3>
-    <p>Le Fourgon Pompe Tonne est une auto-pompe conçue pour mener à bien, en première intervention, les opérations d'extinction courantes (jusqu'à 3 lances de 65/18 à 300 m) ainsi que des opérations de sauvetage élémentaires.</p>
     <div class="grid2">
-      <div class="kpi"><b>2000 l/min</b><span>Débit nominal de la pompe (15 bars à 3 m)</span></div>
+      <div class="kpi"><b>2000 l/mn</b><span>à 15 bars</span></div>
       <div class="kpi"><b>3100 l</b><span>Capacité de la citerne à eau</span></div>
       <div class="kpi"><b>≤ 8 m</b><span>Hauteur verticale d'aspiration maximale</span></div>
       <div class="kpi"><b>8 bars</b><span>Pression d'air (freins & prise de mouvement)</span></div>
@@ -68,7 +67,7 @@ COURSE.modules.push({ id: "m1", menu: "1 · Conduite & sécurité", num: "1", ht
     <table class="t">
       <tr><th>Élément</th><th>Caractéristique</th></tr>
       <tr><td>Châssis</td><td>Renault Midlum 270 SP — type 4×2 — empattement ≈ 3,73 m</td></tr>
-      <tr><td>Moteur</td><td>MIDR 06-20-45 / dCi 6 · 188 kW (255 ch) · carburant gazole</td></tr>
+      <tr><td>Moteur</td><td>dCi 6 · 188 kW (255 ch) · carburant gazole</td></tr>
       <tr><td>Capacité réservoir carburant</td><td>150 litres</td></tr>
       <tr><td>Norme antipollution</td><td>EURO 2 · norme de bruit 80 dB (CEE)</td></tr>
       <tr><td>Essieux / roues</td><td>2 essieux · 2 roues avant, 4 roues arrière · pneus 275/80 R 22,5</td></tr>
@@ -116,9 +115,9 @@ COURSE.modules.push({ id: "m1", menu: "1 · Conduite & sécurité", num: "1", ht
   <p>Conduire en sécurité, c'est conjuguer la <b>connaissance de l'engin</b>, la <b>prudence</b> et le <b>respect du code de la route</b>. Quelques règles essentielles :</p>
   <ul>
     <li>La <b>fiche technique constructeur</b> renseigne sur la puissance et les caractéristiques du moteur et du châssis : on s'y réfère pour connaître les limites de l'engin.</li>
-    <li>Le <b>freinage</b> et le <b>ralentisseur</b> s'utilisent selon les bonnes pratiques (anticipation, ralentisseur en descente).</li>
+    <li>Le <b>freinage</b> et le <b>ralentisseur</b> s'utilisent selon les bonnes pratiques (<b>anticipation</b>, ralentisseur en descente).</li>
     <li>Le conducteur doit <b>connaître les boutons de commande</b> (électriques, mécaniques, pneumatiques) ainsi que les <b>voyants de contrôle</b>.</li>
-    <li>Une <b>conduite souple</b> et une <b>vitesse adaptée</b> permettent un déplacement en sécurité, d'autant que l'engin transporte 3 100 litres d'eau dont le ballant influence la tenue de route.</li>
+    <li>Une <b>conduite souple</b> et une <b>vitesse adaptée</b> permettent un déplacement en sécurité, d'autant que l'engin transporte 3 100 litres d'eau dont le ballant influence la tenue de route. <b>Ne pas rouler avec une citerne qui n'est ni pleine ni vide</b> : un remplissage partiel accentue le ballant et dégrade la tenue de route.</li>
     <li>Avant de partir, le conducteur <b>vérifie l'arrimage du matériel et la fermeture des coffres</b>.</li>
   </ul>
   <div class="callout tip"><b>À retenir :</b> la pression d'air de <b>8 bars</b> est la condition commune au déplacement (freins) et à l'enclenchement de la prise de mouvement. C'est le réflexe-sécurité numéro un de ce module.</div>
@@ -129,8 +128,8 @@ quiz: { title: "QCM — Module 1 : Conduite et sécurité", pass: 80, questions:
   { q: "Le voyant « prise de mouvement » est allumé. Que peut-on en conclure avec certitude&nbsp;?", o: ["La pompe est forcément entraînée", "La pompe peut ne pas être entraînée si la pression d'air est insuffisante", "Le frein de parc est serré", "La citerne est pleine"], c: [1], e: "Le voyant peut être allumé alors que la pression d'air ne suffit pas : la pompe n'est alors pas réellement entraînée." },
   { q: "Quel est l'ordre correct au démarrage&nbsp;?", o: ["Contact → alimentation → point mort → démarrage", "Alimentation → point mort → contact → démarrage (voyants éteints)", "Démarrage → point mort → alimentation", "Point mort → démarrage → alimentation"], c: [1], e: "On alimente, on vérifie le point mort, on met le contact, puis on démarre une fois les voyants éteints." },
   { q: "Quelles vérifications incombent au conducteur avant le roulage&nbsp;? (plusieurs réponses)", o: ["Arrimage du matériel", "Fermeture des coffres", "Connaissance des voyants et commandes", "Recalcul du PTAC du véhicule"], c: [0, 1, 2], e: "Arrimage, coffres, et connaissance des commandes/voyants. Le PTAC est une donnée constructeur." },
-  { q: "À quoi sert le ralentisseur sur échappement&nbsp;?", o: ["À accélérer plus vite", "À maîtriser la vitesse en descente sans surchauffer les freins", "À amorcer la pompe", "À gonfler les bouteilles d'air"], c: [1], e: "Le ralentisseur aide à contrôler la vitesse en descente et préserve les freins de service." },
-  { q: "Combien de places compte la cabine et pour combien d'ARI est-elle conçue&nbsp;?", o: ["4 places / 2 ARI", "8 places / 4 ARI", "6 places / 6 ARI", "2 places / 0 ARI"], c: [1], e: "Cabine 8 places, conçue pour recevoir 4 appareils respiratoires isolants." }
+  { q: "À quoi sert le ralentisseur sur échappement&nbsp;?", o: ["À accélérer plus vite", "Anticiper toute action de freinage", "À amorcer la pompe", "À gonfler les bouteilles d'air"], c: [1], e: "Le ralentisseur aide à contrôler la vitesse en descente et préserve les freins de service." },
+  { q: "Combien de places compte la cabine&nbsp;?", o: ["4 places", "8 places", "6 places", "2 places"], c: [1], e: "Cabine 8 places, conçue pour recevoir 4 appareils respiratoires isolants." }
 ]}});
 
 /* ====================================================================== */
@@ -159,8 +158,8 @@ COURSE.modules.push({ id: "m2", menu: "2 · Pertes de charge", num: "2", html: `
   <div class="formula">J₂ = J₁ × ( <b>Q₂ / Q₁</b> )²</div>
   <table class="t">
     <tr><th>Symbole</th><th>Signification</th></tr>
-    <tr><td>Q₁</td><td>Débit nominal de référence dans un tuyau</td></tr>
-    <tr><td>J₁</td><td>Pertes de charge nominales hectométriques (pour 100 m) au débit Q₁</td></tr>
+    <tr><td>Q₁</td><td>Débit nominal de référence dans un tuyau<br><b>Diamètre 45 mm : 250 l/mn</b><br><b>Diamètre 70 mm : 500 l/mn</b></td></tr>
+    <tr><td>J₁</td><td>Pertes de charge nominales hectométriques (pour 100 m) au débit Q₁<br><b>Diamètre 45 mm : 1,5 b</b><br><b>Diamètre 70 mm : 0,55 b</b></td></tr>
     <tr><td>Q₂</td><td>Nouveau débit réellement écoulé dans le tronçon</td></tr>
     <tr><td>J₂</td><td>Nouvelles pertes de charge hectométriques (pour 100 m) au débit Q₂</td></tr>
   </table>
@@ -185,7 +184,6 @@ COURSE.modules.push({ id: "m2", menu: "2 · Pertes de charge", num: "2", html: `
     <li><b>Z</b> = perte (ou gain) due au dénivelé ;</li>
     <li><b>Σ J₂</b> = somme des pertes de charge de chaque tronçon de l'établissement.</li>
   </ul>
-  <div class="callout warn">Le calcul des J₂ se fait <b>indépendamment pour chaque diamètre de tuyau</b>, puis on additionne le tout. La perte dans les pièces de jonction (raccords, divisions) est <b>négligeable</b>.</div>
 
   <h3>2.6 — Exemple complet (cas du FPT)</h3>
   <div class="card">
@@ -267,7 +265,7 @@ COURSE.modules.push({ id: "m3", menu: "3 · La pompe", num: "3", html: `
       <tr><th>Élément</th><th>Fonction</th></tr>
       <tr><td>Vanne d'alimentation citerne</td><td>Met la pompe en relation avec la réserve d'eau du véhicule.</td></tr>
       <tr><td>Vanne d'alimentation extérieure</td><td>Met la pompe en relation avec un point d'eau / une bouche.</td></tr>
-      <tr><td>Vannes de refoulement</td><td>Alimentent les lances et établissements ; vannes à clapet (laminage/réglage du débit).</td></tr>
+      <tr><td>Vannes de refoulement</td><td>Alimentent les lances et établissements.</td></tr>
       <tr><td>Vanne « retour tonne »</td><td>Renvoie de l'eau vers la citerne pour éviter l'échauffement en circuit fermé et compléter la tonne.</td></tr>
       <tr><td>Manomètre de refoulement</td><td>Affiche la pression de sortie de la pompe (valeur positive).</td></tr>
       <tr><td>Mano-vacuomètre</td><td>Affiche la dépression à l'aspiration (valeur négative) ou la pression d'un point d'eau.</td></tr>
@@ -287,7 +285,7 @@ COURSE.modules.push({ id: "m3", menu: "3 · La pompe", num: "3", html: `
     <li><b>Relâcher</b> la pédale d'embrayage.</li>
     <li>Si l'on descend du véhicule, <b>caler</b> celui-ci.</li>
   </ol>
-  <div class="callout danger">Ne jamais craboter la prise de mouvement <b>sans avoir débrayé</b> au préalable : on risque d'endommager la transmission et la prise de mouvement.</div>
+  <div class="callout danger">Ne jamais craboter la prise de mouvement <b>sans avoir débrayé</b> au préalable : on risque d'endommager le mécanisme.</div>
 
   <h3>3.3 — Fonctionnement de la pompe</h3>
   <ol class="steps">
@@ -303,8 +301,8 @@ COURSE.modules.push({ id: "m3", menu: "3 · La pompe", num: "3", html: `
   <div class="callout danger">Le <b>conducteur est garant</b> de l'alimentation des lances et de la pression nécessaire à leur bon fonctionnement tout au long de l'intervention.</div>
 
   <h3>3.4 — Gérer la pression et les débits</h3>
-  <p>La pression varie quand on ouvre ou ferme des lances : le conducteur surveille en permanence le manomètre de refoulement et ajuste le régime moteur. La <b>vanne à clapet</b> sur le refoulement permet le <b>laminage</b> (réglage du débit) et régule automatiquement son ouverture selon les variations de débit/pression. Elle évite aussi le désamorçage lors d'une baisse de régime. <b>Fermeture sens horaire, ouverture sens anti-horaire.</b></p>
-  <div class="callout warn">Avant de <b>fermer sur le refoulement</b>, <b>baisser le régime moteur jusqu'à 3 ou 4 bars</b> : on évite les coups de bélier et le désamorçage.</div>
+  <p>La pression varie quand on ouvre ou ferme des lances : le conducteur surveille en permanence le manomètre de refoulement et ajuste le régime moteur.</p>
+  <div class="callout warn">Avant de <b>fermer sur le refoulement</b>, <b>baisser le régime moteur jusqu'à 3 ou 4 bars</b> : on évite les coups de bélier et la remise en fonctionnement de l'amorceur.</div>
 
   <h3>3.5 — Arrêt de la pompe</h3>
   <ol class="steps">
@@ -318,13 +316,12 @@ COURSE.modules.push({ id: "m3", menu: "3 · La pompe", num: "3", html: `
   <div class="card">
     <ul>
       <li>Ne pas craboter la prise de mouvement sans avoir débrayé.</li>
-      <li>Ne pas prolonger un régime moteur au maxi (≈ 2100 t/min).</li>
+      <li>Ne pas dépasser un régime moteur maxi de 2100 t/min lors d'une aspiration.</li>
       <li><b>Ne pas laisser tourner la pompe à sec</b> : le liquide pompé assure sa lubrification et son refroidissement.</li>
-      <li>Ne pas laisser tourner la pompe longtemps <b>sans la faire débiter</b> (d'où le retour tonne).</li>
-      <li>Ne pas prolonger un amorçage au-delà de <b>60 secondes</b> : au-delà, il y a une anomalie à détecter.</li>
+      <li>Ne pas laisser tourner la pompe longtemps <b>sans la faire débiter</b> (ou ouvrir le retour tonne).</li>
+      <li>Ne pas prolonger un amorçage au-delà de <b>60 secondes pour 1 ligne et 90 secondes pour 2 lignes</b> : au-delà, il y a une anomalie à détecter.</li>
     </ul>
   </div>
-  <div class="callout info"><b>Après utilisation :</b> laisser les vannes de refoulement <b>partiellement ouvertes</b> (consigne constructeur).</div>
 
   <div class="schema">
     <svg viewBox="0 0 620 210" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,Arial" font-size="11">
@@ -352,9 +349,7 @@ quiz: { title: "QCM — Module 3 : Mise en pompe et fonctionnement", pass: 80, q
   { q: "Quelle pression minimale arrête le fonctionnement de l'amorceur&nbsp;?", o: ["1 à 2 bars", "3 à 4 bars", "8 bars", "12 bars"], c: [1], e: "On obtient 3 à 4 bars avec l'accélérateur manuel pour arrêter l'amorceur." },
   { q: "Que faut-il faire AVANT de fermer sur le refoulement&nbsp;?", o: ["Accélérer au maximum", "Baisser le régime jusqu'à 3-4 bars", "Couper la prise de mouvement", "Ouvrir la citerne"], c: [1], e: "On baisse à 3-4 bars pour éviter coups de bélier et désamorçage." },
   { q: "Pourquoi ne faut-il jamais faire tourner la pompe à sec&nbsp;?", o: ["Pour économiser l'eau", "Parce que le liquide pompé assure lubrification et refroidissement", "Pour ne pas user les pneus", "Pour garder la pression d'air"], c: [1], e: "Sans eau, la pompe n'est ni lubrifiée ni refroidie : elle s'endommage." },
-  { q: "Sens de fermeture de la vanne à clapet sur le refoulement&nbsp;?", o: ["Sens horaire", "Sens anti-horaire", "Vers le haut", "Aucun sens"], c: [0], e: "Fermeture sens horaire, ouverture sens anti-horaire." },
   { q: "Qui est garant de l'alimentation des lances et de la pression&nbsp;?", o: ["Le chef d'agrès", "Le conducteur", "Le constructeur", "Le mécanicien"], c: [1], e: "Le conducteur en est garant pendant toute l'intervention." },
-  { q: "Après utilisation, dans quel état laisse-t-on les vannes de refoulement&nbsp;?", o: ["Complètement fermées", "Partiellement ouvertes", "Démontées", "Complètement ouvertes"], c: [1], e: "Consigne constructeur : les laisser partiellement ouvertes." }
 ]}});
 
 /* ====================================================================== */
@@ -391,6 +386,7 @@ COURSE.modules.push({ id: "m4", menu: "4 · Mise en aspiration", num: "4", html:
   <div class="callout danger"><b>La crépine et le filtre sont indispensables</b> à la protection de la pompe. Aspirer sans crépine risque d'obstruer et d'endommager la pompe.</div>
 
   <h3>4.4 — Mode opératoire de la mise en aspiration</h3>
+  <p>Après avoir monté et raccordé la ou les lignes d'aspiration :</p>
   <ol class="steps">
     <li>Vérifier que la <b>prise de mouvement est enclenchée</b>.</li>
     <li>Vérifier que la <b>vanne d'aspiration citerne est fermée</b>.</li>
@@ -423,15 +419,15 @@ COURSE.modules.push({ id: "m4", menu: "4 · Mise en aspiration", num: "4", html:
     <tr><td>Amorçage réalisé</td><td>Quand la pression de refoulement atteint <b>3 bars</b>, cette pression de pilotage plaque le clapet (11) sur son siège, repousse la membrane (15) qui perd sa force ; le clapet se referme. La vanne revient en position repos.</td></tr>
     <tr><td>Clapet anti-retour</td><td>Dès l'arrêt de l'amorceur, il se ferme et est maintenu par la pression de la tuyauterie d'aspiration.</td></tr>
   </table>
-  <div class="callout danger"><b>Attention :</b> une fuite importante au clapet anti-retour peut rouvrir le clapet de la vanne d'amorçage et provoquer un <b>désamorçage</b> de la pompe (la dépression d'aspiration peut dépasser la force du ressort + le vide de l'amorceur).</div>
+  <div class="callout danger"><b>Attention :</b> une fuite importante au clapet anti-retour peut rouvrir le clapet de la vanne d'amorçage et provoquer un <b>désamorçage</b> de la pompe ou empêcher l'amorçage (le capuchon de la vanne d'amorçage reste immobile).</div>
   <div class="callout warn"><b>Commande manuelle de secours :</b> en cas de rupture de la membrane, le capuchon (01) reste immobile au lieu de descendre. Il suffit alors d'<b>appuyer sur le capuchon (01)</b> pour ouvrir le clapet (16) ; <b>relâcher dès l'amorçage réalisé</b>.</div>
   <div class="callout info"><b>Source sous pression (poteau / bouche d'incendie) :</b> le clapet (11) se plaque sur son siège et isole l'amorceur de toute mise sous pression inopinée. Après usage, penser à <b>décompresser la chambre basse</b> de la vanne en ouvrant le robinet de vidange correspondant.</div>
 
   <h3>4.7 — Alimentation sur bouche / poteau d'incendie</h3>
   <p>Quand la source est déjà sous pression, <b>l'amorçage est inutile</b>. Mode opératoire :</p>
   <ol class="steps">
-    <li>Établir une ligne d'alimentation (tuyau de toile de 110).</li>
-    <li><b>Dégorger</b> la bouche d'incendie.</li>
+    <li>Établir une ligne d'alimentation (1 tuyau de 110 mm ou 2 tuyaux de 70 mm).</li>
+    <li><b>Purger</b> la bouche d'incendie ou le poteau.</li>
     <li>Raccorder la ligne : d'un côté sur la bouche, de l'autre sur l'orifice d'alimentation.</li>
     <li>Ouvrir <b>entièrement</b> la bouche d'incendie.</li>
     <li>Mettre la pompe en œuvre et régler le régime pour obtenir la pression voulue au refoulement.</li>
@@ -478,14 +474,13 @@ COURSE.modules.push({ id: "m5", menu: "5 · Pannes & entretien", num: "5", html:
       <li>du <b>plein de la réserve amorceur</b>.</li>
     </ul>
   </div>
-  <div class="callout info">Des visites <b>mensuelles</b> (ou plus espacées) sont également nécessaires et peuvent faire l'objet de <b>notes de service internes</b>.</div>
+  <div class="callout info">Des visites <b>mensuelles</b> (ou plus espacées) sont également nécessaires et peuvent faire l'objet de <b>notes de service internes</b> en plus du suivi constructeur.</div>
 
   <h3>5.3 — Bonnes pratiques d'entretien complémentaires</h3>
   <div class="card">
     <ul>
       <li><b>Protection anti-corrosion :</b> les équipements sont protégés par un produit type WAXOYL, à renouveler périodiquement (≈ 1 fois par an en métropole).</li>
       <li><b>Conditionnement hiver :</b> protéger le circuit hydraulique du gel (vidanger les parties exposées, suivre la procédure constructeur).</li>
-      <li><b>Vidange / purge :</b> après emploi, vider le circuit selon les consignes ; laisser les vannes de refoulement partiellement ouvertes.</li>
       <li><b>Surveillance en fonctionnement :</b> régime moteur, température d'eau moteur, pression de refoulement, et niveau de carburant.</li>
     </ul>
   </div>
@@ -517,12 +512,11 @@ COURSE.modules.push({ id: "m5", menu: "5 · Pannes & entretien", num: "5", html:
   <div class="callout tip">La <b>rigueur du conducteur</b> dans les vérifications journalières est la première des protections : la plupart des pannes d'amorçage proviennent d'un défaut d'étanchéité ou d'une crépine mal placée — des points entièrement sous son contrôle.</div>
 `,
 quiz: { title: "QCM — Module 5 : Pannes et entretien", pass: 80, questions: [
-  { q: "Un amorçage normal ne doit pas durer plus de…", o: ["30 secondes", "1 minute", "2 minutes", "5 minutes"], c: [1], e: "Au-delà d'une minute, on suspecte une anomalie (étanchéité, hauteur, crépine…)." },
+  { q: "Un amorçage normal avec une seule ligne ne doit pas durer plus de…", o: ["30 secondes", "1 minute", "2 minutes", "5 minutes"], c: [1], e: "Au-delà d'une minute, on suspecte une anomalie (étanchéité, hauteur, crépine…)." },
   { q: "La pompe se désamorce quand on ouvre la vanne de refoulement. Remède&nbsp;?", o: ["Accélérer fortement", "Ouvrir la vanne plus lentement", "Fermer la citerne", "Changer la crépine"], c: [1], e: "Une ouverture trop rapide provoque le désamorçage : ouvrir plus lentement." },
   { q: "Quelles vérifications font partie de la visite journalière&nbsp;? (plusieurs réponses)", o: ["Plein d'huile moteur", "Plein de la réserve amorceur", "Enclenchement de la prise de mouvement", "Remplacement systématique de la pompe"], c: [0, 1, 2], e: "Huile, refroidissement, batteries, prise de mouvement, citerne, arrimage, réserve amorceur." },
   { q: "En cas d'insuffisance de débit, quelle cause est plausible&nbsp;?", o: ["Crépine obstruée", "Citerne trop pleine", "Pression d'air à 8 bars", "Frein de parc serré"], c: [0], e: "Crépine obstruée, toile décollée, ou pompe obstruée par un fonctionnement sans crépine." },
   { q: "Une pompe a tourné sans crépine et est obstruée. Remède&nbsp;?", o: ["La rincer à l'eau de la citerne", "La déposer et la nettoyer", "Augmenter le régime moteur", "Changer le joint de raccord"], c: [1], e: "Il faut déposer la pompe et la nettoyer." },
-  { q: "À quoi sert l'application périodique de WAXOYL&nbsp;?", o: ["À lubrifier la pompe", "À protéger les équipements contre la corrosion", "À amorcer plus vite", "À nettoyer la citerne"], c: [1], e: "C'est une protection anti-corrosion des équipements, à renouveler périodiquement." },
   { q: "La crépine est hors de l'eau et l'amorçage échoue. Que faire&nbsp;?", o: ["Augmenter à 2500 t/min", "Replacer correctement la crépine (immersion complète)", "Fermer le retour tonne", "Démonter la vanne d'amorçage"], c: [1], e: "Replacer la crépine pour qu'elle soit complètement immergée." }
 ]}});
 
@@ -540,7 +534,6 @@ const FINAL = { id: "final", menu: "QCM final", num: "★", title: "QCM final �
   { q: "Avant de fermer le refoulement, le régime doit être&nbsp;:", o: ["Au maximum", "Baissé à 3-4 bars", "Coupé", "Indifférent"], c: [1], e: "Baisser à 3-4 bars avant fermeture." },
   { q: "Amorçage > 1 minute : quelles causes suspecter&nbsp;? (plusieurs réponses)", o: ["Hauteur d'aspiration trop grande", "Raccord mal serré / joint défectueux", "Crépine hors de l'eau", "Citerne trop pleine"], c: [0, 1, 2], e: "Étanchéité, hauteur, crépine, tuyau percé : autant de causes de difficulté d'amorçage." },
   { q: "Qui est garant de l'alimentation des lances et de la pression&nbsp;?", o: ["Le chef d'agrès", "Le conducteur", "Le constructeur", "Le mécanicien"], c: [1], e: "Le conducteur." },
-  { q: "Sens de fermeture de la vanne à clapet&nbsp;?", o: ["Horaire", "Anti-horaire", "Aucun sens", "Vers le bas"], c: [0], e: "Fermeture horaire, ouverture anti-horaire." },
   { q: "Sur bouche d'incendie, la pression d'alimentation ne doit jamais dépasser&nbsp;:", o: ["3 bars", "5 bars", "8 bars", "12 bars"], c: [2], e: "Jamais plus de 8 bars en alimentation sous pression." },
   { q: "Pourquoi ne jamais faire tourner la pompe à sec&nbsp;?", o: ["Pour économiser l'eau", "Le liquide assure lubrification et refroidissement", "Pour ménager les pneus", "Pour garder la pression d'air"], c: [1], e: "Sans eau, la pompe n'est ni lubrifiée ni refroidie." }
 ]};
